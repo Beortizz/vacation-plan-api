@@ -22,8 +22,11 @@ use App\Http\Controllers\HolidayPlanController;
 
  Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('holiday-plans', HolidayPlanController::class);
+    Route::get('/holiday-plans/generate-pdf/{holidayPlan}', [HolidayPlanController::class, 'generatePdf'])
+                ->name('generate-pdf');
     Route::post('/logout', [AuthController::class, 'logout'])
                 ->name('logout');
+    
  });
 
 

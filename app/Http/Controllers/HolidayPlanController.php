@@ -7,6 +7,7 @@ use App\Http\Requests\StoreHolidayPlanRequest;
 use App\Http\Requests\UpdateHolidayPlanRequest;
 use Exception;
 use Illuminate\Validation\ValidationException;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class HolidayPlanController extends Controller
@@ -91,5 +92,12 @@ class HolidayPlanController extends Controller
         } catch (Exception $e) {
             return response()->json(['message' => 'Failed to delete holiday plan'], 500);
         }
+    }
+
+    public function generatePDF(HolidayPlan $holidayPlan)
+    {
+        $holidayPlan->load('users');
+        $pdf = PDF::loadView('holiday-plan-pdf', compact('holidayPlan'));
+        return $pdf->stream('holiday-plan.pdf');
     }
 }
