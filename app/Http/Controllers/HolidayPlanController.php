@@ -55,7 +55,7 @@ class HolidayPlanController extends Controller
     public function show(HolidayPlan $holidayPlan)
     {
         $holidayPlan->load('users');
-        return response()->json($holidayPlan);
+        return response()->json($holidayPlan, 200);
     }
 
     /**
@@ -85,8 +85,8 @@ class HolidayPlanController extends Controller
     public function destroy(HolidayPlan $holidayPlan)
     {
         try {
-            $holidayPlan->delete();
             $holidayPlan->users()->detach();
+            $holidayPlan->delete();
 
             return response()->json(['message' => 'Holiday plan deleted successfully'], 200);
         } catch (Exception $e) {
@@ -98,6 +98,8 @@ class HolidayPlanController extends Controller
     {
         $holidayPlan->load('users');
         $pdf = PDF::loadView('holiday-plan-pdf', compact('holidayPlan'));
-        return $pdf->stream('holiday-plan.pdf');
+        $pdf->stream('holiday-plan.pdf');
+
+        return response()->json(['message' => 'PDF generated successfully'], 200);
     }
 }
