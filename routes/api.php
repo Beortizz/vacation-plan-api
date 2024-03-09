@@ -1,8 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HolidayPlanController;
+
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +20,19 @@ use App\Http\Controllers\HolidayPlanController;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    Route::resource('holiday-plans', HolidayPlanController::class);
-});
+ Route::middleware(['auth:sanctum'])->group(function () {
+    Route::apiResource('holiday-plans', HolidayPlanController::class);
+    Route::post('/logout', [AuthController::class, 'logout'])
+                ->name('logout');
+ });
+
+
+
+Route::post('/register', [AuthController::class, 'register'])
+                ->middleware('guest')
+                ->name('register');
+
+Route::post('/login', [AuthController::class, 'login'])
+                ->middleware('guest')
+                ->name('login');
+

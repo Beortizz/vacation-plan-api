@@ -45,6 +45,6 @@ class User extends Authenticatable
 
     public function holidayPlans()
     {
-        return $this->belongsToMany(HolidayPlan::class);
+        return $this->belongsToMany(HolidayPlan::class, 'holiday_plan_user', 'user_id', 'holiday_plan_id');
     }
 }

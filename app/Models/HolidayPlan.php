@@ -18,6 +18,6 @@ class HolidayPlan extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'holiday_plan_user', 'holiday_plan_id', 'user_id');
     }
 }

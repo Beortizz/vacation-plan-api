@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('holiday_plans_users', function (Blueprint $table) {
+        Schema::create('holiday_plan_user', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->unsignedBigInteger('holiday_plan_id');

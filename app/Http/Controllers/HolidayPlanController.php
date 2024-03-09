@@ -16,9 +16,11 @@ class HolidayPlanController extends Controller
      */
     public function index()
     {
-        $holidayPlans = HolidayPlan::all();
-
-        return response()->json($holidayPlans);
+        $holidayPlans = HolidayPlan::with('users')->get();
+        
+        return response()->json([
+            $holidayPlans, 
+        ], 200);
     }
 
     /**
@@ -26,14 +28,15 @@ class HolidayPlanController extends Controller
      */
     public function store(StoreHolidayPlanRequest $request)
     {
-        
-        try {
-            $holidayPlan = HolidayPlan::create($request->validated());
-            foreach ($request->users as $user) {
-                $holidayPlan->users()->attach($user);
-            }
 
-            return response()->json(['message' => 'Holiday plan created successfully'], 201);
+        try {
+
+        $holidayPlan = HolidayPlan::create($request->validated());
+        if ($request->participants) {
+            $holidayPlan->users()->attach($request->participants);
+        }
+
+        return response()->json(['message' => 'Holiday plan created successfully'], 201);
         } catch(Exception $e) {
 
             if ($e instanceof ValidationException) {
@@ -42,7 +45,7 @@ class HolidayPlanController extends Controller
         }
 
         return response()->json(['message' => 'Failed to create holiday plan'], 500);
-     
+
     }
 
     /**
@@ -50,6 +53,7 @@ class HolidayPlanController extends Controller
      */
     public function show(HolidayPlan $holidayPlan)
     {
+        $holidayPlan->load('users');
         return response()->json($holidayPlan);
     }
 
@@ -60,14 +64,13 @@ class HolidayPlanController extends Controller
     {
         try {
             $holidayPlan->update($request->validated());
-            foreach ($request->users as $user) {
-                $holidayPlan->users()->sync($user);
+            if ($request->participants){
+                $holidayPlan->users()->sync($request->participants);
             }
 
             return response()->json(['message' => 'Holiday plan updated successfully'], 200);
-        } catch(Exception $e) {
-
-            if ($e instanceof ValidationException) {
+        } catch (Exception $e) {
+            if($e instanceof ValidationException) {
                 return response()->json(['message' => 'Validation failed', 'errors' => $e->errors()], 422);
             }
         }
@@ -85,7 +88,7 @@ class HolidayPlanController extends Controller
             $holidayPlan->users()->detach();
 
             return response()->json(['message' => 'Holiday plan deleted successfully'], 200);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['message' => 'Failed to delete holiday plan'], 500);
         }
     }
