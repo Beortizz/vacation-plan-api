@@ -8,4 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class HolidayPlan extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'description',
+        'date',
+        'location',
+    ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }
