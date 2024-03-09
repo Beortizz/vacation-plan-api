@@ -29,6 +29,9 @@ class HolidayPlanController extends Controller
         
         try {
             $holidayPlan = HolidayPlan::create($request->validated());
+            foreach ($request->users as $user) {
+                $holidayPlan->users()->attach($user);
+            }
 
             return response()->json(['message' => 'Holiday plan created successfully'], 201);
         } catch(Exception $e) {
@@ -57,6 +60,9 @@ class HolidayPlanController extends Controller
     {
         try {
             $holidayPlan->update($request->validated());
+            foreach ($request->users as $user) {
+                $holidayPlan->users()->sync($user);
+            }
 
             return response()->json(['message' => 'Holiday plan updated successfully'], 200);
         } catch(Exception $e) {
@@ -76,6 +82,7 @@ class HolidayPlanController extends Controller
     {
         try {
             $holidayPlan->delete();
+            $holidayPlan->users()->detach();
 
             return response()->json(['message' => 'Holiday plan deleted successfully'], 200);
         } catch(Exception $e) {
